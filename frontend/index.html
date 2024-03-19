@@ -73,9 +73,10 @@
           const sentiment = sentimentResult[0][0].label;
           const score = sentimentResult[0][0].score;
 
-          // Generate alternative statement
-          const generationResult = await query("gpt2", {
-            inputs: inputText,
+          // Generate alternative statement using Gemma
+          const prompt = `Generate an alternative statement for the following text:\n\n${inputText}\n\nAlternative statement:`;
+          const generationResult = await query("google/gemma-7b", {
+            inputs: prompt,
             parameters: {
               max_length: 50,
               num_return_sequences: 1,
@@ -86,14 +87,15 @@
             generationResult
           );
 
-          const alternativeStatement = generationResult[0].generated_text;
+          const generatedText = generationResult[0].generated_text;
+          const alternativeStatement = generatedText.replace(prompt, "").trim();
 
           // Display the results
           outputDiv.innerHTML = `
-          <p><strong>Sentiment:</strong> ${sentiment}</p>
-          <p><strong>Score:</strong> ${(score * 100).toFixed(2)}%</p>
-          <p><strong>Alternative Statement:</strong> ${alternativeStatement}</p>
-        `;
+            <p><strong>Sentiment:</strong> ${sentiment}</p>
+            <p><strong>Score:</strong> ${(score * 100).toFixed(2)}%</p>
+            <p><strong>Alternative Statement:</strong> ${alternativeStatement}</p>
+          `;
         } catch (error) {
           console.error("Error:", error);
           outputDiv.innerHTML = `An error occurred: ${error.message}`;
