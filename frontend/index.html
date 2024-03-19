@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Team 4</title>
+  </head>
+  <body>
+    <h1>Team 4's Sentiment Analysis Model</h1>
+    <input type="text" id="text-input" placeholder="Enter a sentence" />
+    <button id="submit-button">Submit</button>
+    <p id="result">Result: <span id="result-text">N/A</span></p>
+    <script>
+      const endpoint = "http://localhost:5000/predict";
+      document.getElementById("submit-button").addEventListener("click", function() {
+        var text = document.getElementById("text-input").value;
+        fetch(endpoint, {
+          method: "POST",
+          body: JSON.stringify({ text: text }),
+          headers: {
+            "Content-Type": "application/json"
+          }
+        })
+          .then(response => response.json())
+          .then(data => {
+            document.getElementById("result-text").innerText = data.result;
+          });
+      });
+    </script>
+  </body>
+</html>
